@@ -1,6 +1,6 @@
 # Animalia App Switcher — Design Spec
 
-Status: **approved by user (mockup + design direction), pending final app list confirmation**
+Status: **approved by user — mockup, design direction, and app list all confirmed**
 Date: 2026-09-13
 
 ## 1. Problem
@@ -110,19 +110,14 @@ automation with no UI.
 | kreloses | Kreloses Dashboard | https://kreloses-dashboard.vercel.app | pink | Admin |
 | pricelist | Supplier Pricelist | https://animalia-supplier-pricelist.vercel.app | lavender | Admin |
 | money | Smart Money Tracker | https://smart-money-tracker-ecru.vercel.app | peach | Admin |
+| finance-os | Finance OS | https://animalia-finance-os.vercel.app | teal | Admin |
 
-**Excluded, pending confirmation** — flagged for the user to correct before
-implementation:
-- `animalia-vet-sendayan-website` (animaliavet.net) — public marketing site, not
-  an internal staff tool.
-- `projects-dashboard` — the user's own dev-ops dashboard, not staff-facing.
-- `animalia-finance-os` — unclear if staff use this directly or if it's
-  backend-only infra behind Smart Money Tracker's integration.
-- `convention-pricelist-app`, `Moghul91` (Force Feeding Calculator),
-  `kreloses-automation` — unclear if these are active staff-facing tools for
-  this clinic or separate/dormant projects.
-- Old `xray-share` (pre-cloud-migration, `live: null` in projects.ts) — superseded
-  by `xray-share-web`.
+**Confirmed by user (2026-09-13):** include `animalia-finance-os`; everything
+else stays excluded — `animalia-vet-sendayan-website` (public marketing site),
+`projects-dashboard` (the user's own dev-ops dashboard, not staff-facing),
+`convention-pricelist-app`, `Moghul91` (Force Feeding Calculator),
+`kreloses-automation`, and the old pre-cloud `xray-share` (superseded by
+`xray-share-web`).
 
 Groups (Daily / Clinical / Admin) are a first pass based on app purpose, not
 validated with the user — cheap to change since it's just manifest data.
@@ -130,7 +125,7 @@ validated with the user — cheap to change since it's just manifest data.
 ## 7. Phasing
 
 - **MVP** (this spec's scope): shared package + manifest, sheet/drawer UI with
-  liquid-glass chrome, installed into the 8 confirmed staff apps above.
+  liquid-glass chrome, installed into the 9 confirmed staff apps above.
 - **Phase 2**: recent/most-used row (localStorage), `Ctrl/Cmd+K` on desktop,
   manifest-level `hidden`/`roles` filtering.
 - **Phase 3** (only if wanted later): shared SSO + live per-app badge counts —
