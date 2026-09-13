@@ -9,8 +9,16 @@
   --as-glass-border: rgba(255,255,255,.5);
   --as-glass-sheet-bg: rgba(255,255,255,.86);
   --as-glass-sheen: linear-gradient(135deg, rgba(240,168,198,.5), rgba(47,167,154,.35) 55%, rgba(185,169,224,.4));
-  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  /* No font-family here on purpose: host apps load Baloo 2 / Nunito through
+     next/font, which produces hashed family names, so naming the fonts
+     literally would always fall through to generic sans-serif. Inheriting
+     picks up the host's actually-loaded brand font. */
+  box-sizing: border-box;
 }
+/* Self-consistent sizing whether or not the host ships a border-box reset. */
+.animalia-switcher *,
+.animalia-switcher *::before,
+.animalia-switcher *::after { box-sizing: inherit; }
 @media (prefers-color-scheme: dark) {
   .animalia-switcher:not([data-theme="light"]) {
     --as-teal: #4FCCBD; --as-pink: #F2B7D3;
