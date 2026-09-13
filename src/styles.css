@@ -3,7 +3,7 @@
   --as-pink: #F0A8C6; --as-pink-ink: #5C1B36;
   --as-lavender: #B9A9E0; --as-lavender-ink: #2E2054;
   --as-peach: #F4B98A; --as-peach-ink: #4A2A0C;
-  --as-surface: #FFFFFF; --as-muted: #5C716B; --as-border: #DCEAE5;
+  --as-surface: #FFFFFF; --as-ink: #16231F; --as-muted: #5C716B; --as-border: #DCEAE5;
   --as-glass-hl: rgba(255,255,255,.85); --as-glass-sh: rgba(20,45,50,.12);
   --as-glass-bg-1: rgba(255,255,255,.6); --as-glass-bg-2: rgba(255,255,255,.22);
   --as-glass-border: rgba(255,255,255,.5);
@@ -13,7 +13,9 @@
 }
 @media (prefers-color-scheme: dark) {
   .animalia-switcher:not([data-theme="light"]) {
-    --as-surface: #16221F; --as-muted: #91A8A1; --as-border: #263833;
+    --as-teal: #4FCCBD; --as-pink: #F2B7D3;
+    --as-lavender: #C9BCEA; --as-peach: #F5C79B;
+    --as-surface: #16221F; --as-ink: #EAF4F0; --as-muted: #91A8A1; --as-border: #263833;
     --as-glass-hl: rgba(255,255,255,.30); --as-glass-sh: rgba(0,0,0,.45);
     --as-glass-bg-1: rgba(255,255,255,.16); --as-glass-bg-2: rgba(255,255,255,.05);
     --as-glass-border: rgba(255,255,255,.2);
@@ -32,7 +34,7 @@
   border-radius: 999px;
   padding: 10px 16px 10px 10px;
   box-shadow: inset 1.5px 1.5px 0 -0.5px var(--as-glass-hl), inset -1px -1px 0 -0.5px var(--as-glass-sh), 0 8px 20px -8px rgba(18,45,40,.25);
-  cursor: pointer; font-weight: 600; font-size: 0.85rem; color: var(--as-teal-ink);
+  cursor: pointer; font-weight: 600; font-size: 0.85rem; color: var(--as-ink);
   transition: transform .15s ease; overflow: hidden; isolation: isolate;
 }
 .animalia-switcher-pill:active { transform: scale(.96); }
@@ -73,6 +75,10 @@
 }
 .animalia-switcher-drawer--open { transform: translateX(0); }
 
+.animalia-switcher-title {
+  font-weight: 700; font-size: .95rem; margin-bottom: 8px; color: var(--as-ink);
+}
+
 .animalia-switcher-group-label {
   font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
   color: var(--as-muted); margin: 12px 2px 6px;
@@ -92,7 +98,7 @@
 @keyframes as-tile-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 .animalia-switcher-tile .as-icon { width: 30px; height: 30px; border-radius: 9px; padding: 7px; }
-.animalia-switcher-tile .as-name { font-weight: 600; font-size: .85rem; color: #16231F; }
+.animalia-switcher-tile .as-name { font-weight: 600; font-size: .85rem; color: var(--as-ink); }
 
 .tint-teal { background: color-mix(in srgb, var(--as-teal) 22%, var(--as-surface)); color: var(--as-teal-ink); }
 .tint-teal .as-icon { background: var(--as-teal); color: var(--as-teal-ink); }

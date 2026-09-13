@@ -87,7 +87,7 @@ export function AnimaliaSwitcher({
       >
         {open && (
           <>
-            <div style={{ fontWeight: 700, marginBottom: 8 }}>Switch app</div>
+            <div className="animalia-switcher-title">Switch app</div>
             {groupApps(apps).map(([group, groupItems]) => (
               <div key={group}>
                 <div className="animalia-switcher-group-label">{group}</div>
