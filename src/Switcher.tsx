@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchManifest, FALLBACK_MANIFEST } from "./manifest";
 import type { ManifestApp } from "./types";
 import { ICONS } from "./icons";
@@ -45,6 +45,9 @@ export function AnimaliaSwitcher({
   const [open, setOpen] = useState(false);
   const [apps, setApps] = useState<ManifestApp[]>(FALLBACK_MANIFEST);
   const isDesktop = useIsDesktop();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const hasOpened = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,15 +59,38 @@ export function AnimaliaSwitcher({
     };
   }, [manifestUrl]);
 
+  // Escape closes the sheet/drawer — previously the backdrop was the only way out.
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  // Move focus into the sheet when it opens, and back to the pill when it closes.
+  useEffect(() => {
+    if (open) {
+      hasOpened.current = true;
+      sheetRef.current?.focus();
+    } else if (hasOpened.current) {
+      triggerRef.current?.focus();
+    }
+  }, [open]);
+
   const resolvedPosition = position ?? (isDesktop ? "top-right" : "bottom-left");
 
   return (
     <div className="animalia-switcher">
       <button
+        ref={triggerRef}
         type="button"
         aria-label="Apps"
+        aria-haspopup="dialog"
+        aria-expanded={open}
         className={`animalia-switcher-pill animalia-switcher-pill--${resolvedPosition}`}
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen((wasOpen) => !wasOpen)}
       >
         <span className="as-icon" style={{ width: 22, height: 22, borderRadius: "50%" }}>
           {ICONS.clipboard}
@@ -74,11 +100,19 @@ export function AnimaliaSwitcher({
 
       <div
         data-testid="animalia-switcher-backdrop"
+        aria-hidden="true"
         className={`animalia-switcher-backdrop ${open ? "animalia-switcher-backdrop--open" : ""}`}
         onClick={() => setOpen(false)}
       />
 
       <div
+        ref={sheetRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Switch app"
+        aria-hidden={!open}
+        tabIndex={-1}
+        data-testid="animalia-switcher-sheet"
         className={
           isDesktop
             ? `animalia-switcher-drawer ${open ? "animalia-switcher-drawer--open" : ""}`

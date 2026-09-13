@@ -75,4 +75,53 @@ describe("AnimaliaSwitcher", () => {
       expect(screen.queryByText("Smart Money Tracker")).not.toBeInTheDocument();
     });
   });
+
+  it("closes when Escape is pressed", async () => {
+    render(<AnimaliaSwitcher current="task-log" />);
+    fireEvent.click(screen.getByRole("button", { name: /apps/i }));
+    await screen.findByText("Smart Money Tracker");
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    await waitFor(() => {
+      expect(screen.queryByText("Smart Money Tracker")).not.toBeInTheDocument();
+    });
+  });
+
+  it("toggles closed when the pill is clicked again while open", async () => {
+    render(<AnimaliaSwitcher current="task-log" />);
+    const pill = screen.getByRole("button", { name: /apps/i });
+
+    fireEvent.click(pill);
+    await screen.findByText("Smart Money Tracker");
+    expect(pill).toHaveAttribute("aria-expanded", "true");
+
+    fireEvent.click(pill);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Smart Money Tracker")).not.toBeInTheDocument();
+    });
+    expect(pill).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("exposes the sheet as a modal dialog and moves focus into it on open", async () => {
+    render(<AnimaliaSwitcher current="task-log" />);
+    fireEvent.click(screen.getByRole("button", { name: /apps/i }));
+    await screen.findByText("Smart Money Tracker");
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveAttribute("aria-modal", "true");
+    expect(dialog).toHaveFocus();
+  });
+
+  it("returns focus to the pill when the sheet closes", async () => {
+    render(<AnimaliaSwitcher current="task-log" />);
+    const pill = screen.getByRole("button", { name: /apps/i });
+
+    fireEvent.click(pill);
+    await screen.findByText("Smart Money Tracker");
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    await waitFor(() => expect(pill).toHaveFocus());
+  });
 });
