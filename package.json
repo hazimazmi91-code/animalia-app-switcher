@@ -19,7 +19,8 @@
     "build": "tsup",
     "prepare": "npm run build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "npm test"
   },
   "peerDependencies": {
     "react": ">=18",
