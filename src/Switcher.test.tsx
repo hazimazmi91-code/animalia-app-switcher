@@ -42,6 +42,28 @@ describe("AnimaliaSwitcher", () => {
     );
   });
 
+  it("does not render a tile for a manifest entry with a javascript: url", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [
+          { id: "evil", name: "Evil App", url: "javascript:alert(1)", icon: "tag", tint: "pink", group: "Admin" },
+          { id: "task-log", name: "Task Log", url: "https://animalia-task-log.vercel.app", icon: "clipboard", tint: "teal", group: "Daily" },
+        ],
+      })
+    );
+
+    render(<AnimaliaSwitcher current="task-log" />);
+    fireEvent.click(screen.getByRole("button", { name: /apps/i }));
+
+    await screen.findByText("Task Log");
+    expect(screen.queryByText("Evil App")).not.toBeInTheDocument();
+    expect(document.querySelector('a[href^="javascript:"]')).toBeNull();
+    errorSpy.mockRestore();
+  });
+
   it("closes when the backdrop is clicked", async () => {
     render(<AnimaliaSwitcher current="task-log" />);
     fireEvent.click(screen.getByRole("button", { name: /apps/i }));
