@@ -11,4 +11,5 @@ export default defineConfig({
     options.assetNames = "[name]";
   },
   outExtension: ({ format }) => ({ js: format === "esm" ? ".mjs" : ".js" }),
+  banner: { js: '"use client";' },
 });
