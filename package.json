@@ -1,6 +1,6 @@
 {
   "name": "@animalia/switcher",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "type": "module",
   "main": "./dist/index.js",
@@ -17,6 +17,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
+    "prepare": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest"
   },
