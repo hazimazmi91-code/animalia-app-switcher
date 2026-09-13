@@ -5,9 +5,15 @@ import { ICONS } from "./icons";
 import "./styles.css";
 
 export interface AnimaliaSwitcherProps {
+  /** Manifest `id` of the app this switcher is embedded in. */
   current: string;
   manifestUrl?: string;
   position?: "bottom-left" | "bottom-right" | "top-left" | "top-right";
+  /**
+   * Force a colour scheme. Leave unset (the default) to follow the host's
+   * `prefers-color-scheme`.
+   */
+  theme?: "light" | "dark";
 }
 
 const DEFAULT_MANIFEST_URL = "https://projects-dashboard-cyan.vercel.app/switcher-manifest.json";
@@ -41,9 +47,11 @@ export function AnimaliaSwitcher({
   current,
   manifestUrl = DEFAULT_MANIFEST_URL,
   position,
+  theme,
 }: AnimaliaSwitcherProps) {
   const [open, setOpen] = useState(false);
   const [apps, setApps] = useState<ManifestApp[]>(FALLBACK_MANIFEST);
+  const [manifestLoaded, setManifestLoaded] = useState(false);
   const isDesktop = useIsDesktop();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -52,12 +60,26 @@ export function AnimaliaSwitcher({
   useEffect(() => {
     let cancelled = false;
     fetchManifest(manifestUrl).then((result) => {
-      if (!cancelled) setApps(result);
+      if (cancelled) return;
+      setApps(result);
+      setManifestLoaded(true);
     });
     return () => {
       cancelled = true;
     };
   }, [manifestUrl]);
+
+  // Dev aid: a typo'd `current` or a renamed manifest id silently means "no
+  // tile is marked as here", which is easy to miss. Say so out loud.
+  useEffect(() => {
+    if (!manifestLoaded) return;
+    if (apps.some((app) => app.id === current)) return;
+    console.warn(
+      `[animalia-switcher] current="${current}" matches no app in the manifest — no tile will be marked as the current app. Known ids: ${apps
+        .map((app) => app.id)
+        .join(", ")}`
+    );
+  }, [apps, current, manifestLoaded]);
 
   // Escape closes the sheet/drawer — previously the backdrop was the only way out.
   useEffect(() => {
@@ -82,7 +104,7 @@ export function AnimaliaSwitcher({
   const resolvedPosition = position ?? (isDesktop ? "top-right" : "bottom-left");
 
   return (
-    <div className="animalia-switcher">
+    <div className="animalia-switcher" data-theme={theme}>
       <button
         ref={triggerRef}
         type="button"

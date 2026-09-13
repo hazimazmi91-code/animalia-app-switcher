@@ -31,6 +31,19 @@
     --as-glass-sheen: linear-gradient(135deg, rgba(242,183,211,.28), rgba(79,204,189,.22) 55%, rgba(201,188,234,.22));
   }
 }
+/* Same dark palette, forced via the `theme="dark"` prop regardless of
+   prefers-color-scheme. Kept as a duplicate block because custom properties
+   can't be shared across a media-query boundary. */
+.animalia-switcher[data-theme="dark"] {
+  --as-teal: #4FCCBD; --as-pink: #F2B7D3;
+  --as-lavender: #C9BCEA; --as-peach: #F5C79B;
+  --as-surface: #16221F; --as-ink: #EAF4F0; --as-muted: #91A8A1; --as-border: #263833;
+  --as-glass-hl: rgba(255,255,255,.30); --as-glass-sh: rgba(0,0,0,.45);
+  --as-glass-bg-1: rgba(255,255,255,.16); --as-glass-bg-2: rgba(255,255,255,.05);
+  --as-glass-border: rgba(255,255,255,.2);
+  --as-glass-sheet-bg: rgba(22,34,31,.9);
+  --as-glass-sheen: linear-gradient(135deg, rgba(242,183,211,.28), rgba(79,204,189,.22) 55%, rgba(201,188,234,.22));
+}
 
 .animalia-switcher-pill {
   position: fixed; z-index: 9999;
@@ -98,12 +111,16 @@
   display: flex; flex-direction: column; gap: 16px; border: 1px solid transparent;
   box-shadow: inset 1px 1px 0 -0.5px var(--as-glass-hl);
   cursor: pointer; text-align: left; text-decoration: none;
-  opacity: 0; transform: translateY(8px);
+  opacity: 0;
+  /* Fade only: an animation that also drove `transform` (with fill-mode
+     forwards) permanently outranked the :active scale below, so tap feedback
+     never showed. Transform is left to a plain transition instead. */
   animation: as-tile-in .36s cubic-bezier(.22,1,.36,1) forwards;
+  transition: transform .12s ease;
 }
 .animalia-switcher-tile:active { transform: scale(.96); }
 .animalia-switcher-tile--here { border-color: currentColor; }
-@keyframes as-tile-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes as-tile-in { from { opacity: 0; } to { opacity: 1; } }
 
 .animalia-switcher-tile .as-icon { width: 30px; height: 30px; border-radius: 9px; padding: 7px; }
 .animalia-switcher-tile .as-name { font-weight: 600; font-size: .85rem; color: var(--as-ink); }

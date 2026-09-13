@@ -114,6 +114,37 @@ describe("AnimaliaSwitcher", () => {
     expect(dialog).toHaveFocus();
   });
 
+  it("leaves data-theme unset by default and sets it from the theme prop", async () => {
+    const { container, rerender } = render(<AnimaliaSwitcher current="task-log" />);
+    const root = container.querySelector(".animalia-switcher")!;
+    expect(root).not.toHaveAttribute("data-theme");
+
+    rerender(<AnimaliaSwitcher current="task-log" theme="dark" />);
+    await waitFor(() =>
+      expect(container.querySelector(".animalia-switcher")).toHaveAttribute("data-theme", "dark")
+    );
+  });
+
+  it("warns when `current` matches no app in the loaded manifest", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    render(<AnimaliaSwitcher current="not-a-real-app" />);
+
+    await waitFor(() => expect(warnSpy).toHaveBeenCalled());
+    expect(warnSpy.mock.calls[0][0]).toContain('current="not-a-real-app"');
+    warnSpy.mockRestore();
+  });
+
+  it("does not warn when `current` matches an app", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    render(<AnimaliaSwitcher current="task-log" />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /apps/i })).toBeInTheDocument());
+
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
   it("returns focus to the pill when the sheet closes", async () => {
     render(<AnimaliaSwitcher current="task-log" />);
     const pill = screen.getByRole("button", { name: /apps/i });
