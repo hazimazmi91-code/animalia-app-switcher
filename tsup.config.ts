@@ -7,5 +7,8 @@ export default defineConfig({
   clean: true,
   external: ["react", "react-dom"],
   loader: { ".css": "copy" },
+  esbuildOptions(options) {
+    options.assetNames = "[name]";
+  },
   outExtension: ({ format }) => ({ js: format === "esm" ? ".mjs" : ".js" }),
 });
