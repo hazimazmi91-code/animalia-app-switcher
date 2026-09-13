@@ -13,12 +13,12 @@ describe("AnimaliaSwitcher", () => {
   it("is closed by default and opens on pill click", async () => {
     render(<AnimaliaSwitcher current="task-log" />);
 
-    expect(screen.queryByText("Smart Money Tracker")).not.toBeInTheDocument();
+    expect(screen.queryByText("X-ray Share")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /apps/i }));
 
     await waitFor(() => {
-      expect(screen.getByText("Smart Money Tracker")).toBeInTheDocument();
+      expect(screen.getByText("X-ray Share")).toBeInTheDocument();
     });
   });
 
@@ -34,11 +34,11 @@ describe("AnimaliaSwitcher", () => {
     render(<AnimaliaSwitcher current="task-log" />);
     fireEvent.click(screen.getByRole("button", { name: /apps/i }));
 
-    const moneyTile = await screen.findByText("Smart Money Tracker");
-    const link = moneyTile.closest("a");
+    const xrayTile = await screen.findByText("X-ray Share");
+    const link = xrayTile.closest("a");
     expect(link).toHaveAttribute(
       "href",
-      FALLBACK_MANIFEST.find((a) => a.id === "money")!.url
+      FALLBACK_MANIFEST.find((a) => a.id === "xray-share-web")!.url
     );
   });
 
@@ -67,24 +67,24 @@ describe("AnimaliaSwitcher", () => {
   it("closes when the backdrop is clicked", async () => {
     render(<AnimaliaSwitcher current="task-log" />);
     fireEvent.click(screen.getByRole("button", { name: /apps/i }));
-    await screen.findByText("Smart Money Tracker");
+    await screen.findByText("X-ray Share");
 
     fireEvent.click(screen.getByTestId("animalia-switcher-backdrop"));
 
     await waitFor(() => {
-      expect(screen.queryByText("Smart Money Tracker")).not.toBeInTheDocument();
+      expect(screen.queryByText("X-ray Share")).not.toBeInTheDocument();
     });
   });
 
   it("closes when Escape is pressed", async () => {
     render(<AnimaliaSwitcher current="task-log" />);
     fireEvent.click(screen.getByRole("button", { name: /apps/i }));
-    await screen.findByText("Smart Money Tracker");
+    await screen.findByText("X-ray Share");
 
     fireEvent.keyDown(document, { key: "Escape" });
 
     await waitFor(() => {
-      expect(screen.queryByText("Smart Money Tracker")).not.toBeInTheDocument();
+      expect(screen.queryByText("X-ray Share")).not.toBeInTheDocument();
     });
   });
 
@@ -93,13 +93,13 @@ describe("AnimaliaSwitcher", () => {
     const pill = screen.getByRole("button", { name: /apps/i });
 
     fireEvent.click(pill);
-    await screen.findByText("Smart Money Tracker");
+    await screen.findByText("X-ray Share");
     expect(pill).toHaveAttribute("aria-expanded", "true");
 
     fireEvent.click(pill);
 
     await waitFor(() => {
-      expect(screen.queryByText("Smart Money Tracker")).not.toBeInTheDocument();
+      expect(screen.queryByText("X-ray Share")).not.toBeInTheDocument();
     });
     expect(pill).toHaveAttribute("aria-expanded", "false");
   });
@@ -107,7 +107,7 @@ describe("AnimaliaSwitcher", () => {
   it("exposes the sheet as a modal dialog and moves focus into it on open", async () => {
     render(<AnimaliaSwitcher current="task-log" />);
     fireEvent.click(screen.getByRole("button", { name: /apps/i }));
-    await screen.findByText("Smart Money Tracker");
+    await screen.findByText("X-ray Share");
 
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveAttribute("aria-modal", "true");
@@ -150,9 +150,37 @@ describe("AnimaliaSwitcher", () => {
     const pill = screen.getByRole("button", { name: /apps/i });
 
     fireEvent.click(pill);
-    await screen.findByText("Smart Money Tracker");
+    await screen.findByText("X-ray Share");
     fireEvent.keyDown(document, { key: "Escape" });
 
     await waitFor(() => expect(pill).toHaveFocus());
+  });
+
+  it("hides adminOnly apps from a non-admin viewer", async () => {
+    render(<AnimaliaSwitcher current="task-log" />);
+    fireEvent.click(screen.getByRole("button", { name: /apps/i }));
+
+    await screen.findByText("X-ray Share");
+    expect(screen.queryByText("Smart Money Tracker")).not.toBeInTheDocument();
+    expect(screen.queryByText("Finance OS")).not.toBeInTheDocument();
+    expect(screen.queryByText("Supplier Pricelist")).not.toBeInTheDocument();
+  });
+
+  it("shows adminOnly apps when isAdmin is true", async () => {
+    render(<AnimaliaSwitcher current="task-log" isAdmin />);
+    fireEvent.click(screen.getByRole("button", { name: /apps/i }));
+
+    expect(await screen.findByText("Smart Money Tracker")).toBeInTheDocument();
+    expect(screen.getByText("Finance OS")).toBeInTheDocument();
+    expect(screen.getByText("Supplier Pricelist")).toBeInTheDocument();
+  });
+
+  it("always shows the current app even if it's adminOnly and the viewer isn't admin", async () => {
+    render(<AnimaliaSwitcher current="money" />);
+    fireEvent.click(screen.getByRole("button", { name: /apps/i }));
+
+    const hereTile = await screen.findByText("Smart Money Tracker");
+    expect(hereTile.closest("a")).toBeNull();
+    expect(hereTile.closest(".animalia-switcher-tile")).toHaveClass("animalia-switcher-tile--here");
   });
 });

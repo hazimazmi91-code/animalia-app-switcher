@@ -154,6 +154,16 @@ describe("fetchManifest", () => {
       expect(warnSpy).toHaveBeenCalled();
     });
 
+    it("treats a non-boolean adminOnly as true (fail safe) and warns about it", async () => {
+      const odd = { ...sample[0], id: "odd", adminOnly: "yes" };
+      respondWith([odd]);
+
+      const result = await fetchManifest(manifestUrl);
+
+      expect(result).toEqual([{ ...odd, adminOnly: true }]);
+      expect(warnSpy).toHaveBeenCalled();
+    });
+
     it("ignores a corrupt localStorage cache and uses the bundled fallback", async () => {
       localStorage.setItem("animalia-switcher-manifest", JSON.stringify({ not: "a manifest" }));
       vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network down")));

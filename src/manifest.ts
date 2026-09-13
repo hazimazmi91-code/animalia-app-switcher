@@ -10,9 +10,9 @@ export const FALLBACK_MANIFEST: ManifestApp[] = [
   { id: "fluid-rate", name: "Fluid Rate Calc", url: "https://fluid-rate-calculator.vercel.app", icon: "droplet", tint: "lavender", group: "Clinical" },
   { id: "dosage-calc", name: "Dosage Calc", url: "https://dosage-calculator-mu.vercel.app", icon: "capsule", tint: "peach", group: "Clinical" },
   { id: "kreloses", name: "Kreloses Dashboard", url: "https://kreloses-dashboard.vercel.app", icon: "chart-bar", tint: "pink", group: "Admin" },
-  { id: "pricelist", name: "Supplier Pricelist", url: "https://animalia-supplier-pricelist.vercel.app", icon: "tag", tint: "lavender", group: "Admin" },
-  { id: "money", name: "Smart Money Tracker", url: "https://smart-money-tracker-ecru.vercel.app", icon: "wallet", tint: "peach", group: "Admin" },
-  { id: "finance-os", name: "Finance OS", url: "https://animalia-finance-os.vercel.app", icon: "ledger", tint: "teal", group: "Admin" },
+  { id: "pricelist", name: "Supplier Pricelist", url: "https://animalia-supplier-pricelist.vercel.app", icon: "tag", tint: "lavender", group: "Admin", adminOnly: true },
+  { id: "money", name: "Smart Money Tracker", url: "https://smart-money-tracker-ecru.vercel.app", icon: "wallet", tint: "peach", group: "Admin", adminOnly: true },
+  { id: "finance-os", name: "Finance OS", url: "https://animalia-finance-os.vercel.app", icon: "ledger", tint: "teal", group: "Admin", adminOnly: true },
 ];
 
 const LOG_PREFIX = "[animalia-switcher]";
@@ -62,6 +62,15 @@ function validateApp(entry: unknown, index: number): ManifestApp | null {
     console.warn(
       `${LOG_PREFIX} manifest entry ${index} ("${candidate.id as string}") has unknown tint ${JSON.stringify(candidate.tint)} — expected one of ${KNOWN_TINTS.join(", ")}`
     );
+  }
+
+  if ("adminOnly" in candidate && typeof candidate.adminOnly !== "boolean") {
+    // Non-fatal: fail safe by treating a malformed value as admin-only, so a
+    // bad manifest edit can only hide an app too broadly, never expose one.
+    console.warn(
+      `${LOG_PREFIX} manifest entry ${index} ("${candidate.id as string}") has non-boolean adminOnly ${JSON.stringify(candidate.adminOnly)} — treating it as adminOnly: true`
+    );
+    candidate.adminOnly = true;
   }
 
   return candidate as unknown as ManifestApp;

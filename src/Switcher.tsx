@@ -14,6 +14,13 @@ export interface AnimaliaSwitcherProps {
    * `prefers-color-scheme`.
    */
   theme?: "light" | "dark";
+  /**
+   * Whether the current viewer is a staff admin. Manifest apps marked
+   * `adminOnly` are hidden unless this is true — except the app the switcher
+   * is embedded in (`current`), which always shows so the viewer isn't ever
+   * confused about where they are. Defaults to false (most restrictive).
+   */
+  isAdmin?: boolean;
 }
 
 const DEFAULT_MANIFEST_URL = "https://projects-dashboard-cyan.vercel.app/switcher-manifest.json";
@@ -48,6 +55,7 @@ export function AnimaliaSwitcher({
   manifestUrl = DEFAULT_MANIFEST_URL,
   position,
   theme,
+  isAdmin = false,
 }: AnimaliaSwitcherProps) {
   const [open, setOpen] = useState(false);
   const [apps, setApps] = useState<ManifestApp[]>(FALLBACK_MANIFEST);
@@ -68,6 +76,11 @@ export function AnimaliaSwitcher({
       cancelled = true;
     };
   }, [manifestUrl]);
+
+  // adminOnly apps are hidden from non-admin viewers, but never the app the
+  // switcher is embedded in — otherwise a non-admin viewer of an admin-only
+  // app would see every OTHER tile except the one they're actually on.
+  const visibleApps = apps.filter((app) => !app.adminOnly || isAdmin || app.id === current);
 
   // Dev aid: a typo'd `current` or a renamed manifest id silently means "no
   // tile is marked as here", which is easy to miss. Say so out loud.
@@ -144,7 +157,7 @@ export function AnimaliaSwitcher({
         {open && (
           <>
             <div className="animalia-switcher-title">Switch app</div>
-            {groupApps(apps).map(([group, groupItems]) => (
+            {groupApps(visibleApps).map(([group, groupItems]) => (
               <div key={group}>
                 <div className="animalia-switcher-group-label">{group}</div>
                 <div className="animalia-switcher-grid">
