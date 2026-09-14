@@ -114,7 +114,10 @@ export function AnimaliaSwitcher({
     }
   }, [open]);
 
-  const resolvedPosition = position ?? (isDesktop ? "top-right" : "bottom-left");
+  // Bottom corners on both breakpoints: a top corner routinely collides with
+  // a host app's own header content/actions, which is what "the pill blocks
+  // clicking things behind it" reports were always tracing back to.
+  const resolvedPosition = position ?? (isDesktop ? "bottom-right" : "bottom-left");
 
   return (
     <div className="animalia-switcher" data-theme={theme}>
