@@ -1,6 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fetchManifest, FALLBACK_MANIFEST } from "./manifest";
 
+describe("FALLBACK_MANIFEST", () => {
+  it("includes Animalia Tools (visible to everyone) and keeps the legacy Dosage and Fluid Rate apps", () => {
+    const tools = FALLBACK_MANIFEST.find((a) => a.id === "animalia-tools");
+    expect(tools).toMatchObject({ name: "Animalia Tools", url: "https://animalia-tools.vercel.app", group: "Clinical" });
+    expect(tools?.adminOnly).toBeUndefined();
+    expect(FALLBACK_MANIFEST.some((a) => a.id === "dosage-calc")).toBe(true);
+    expect(FALLBACK_MANIFEST.some((a) => a.id === "fluid-rate")).toBe(true);
+  });
+
+  it("keeps exactly the same admin-only apps as before", () => {
+    const adminOnly = FALLBACK_MANIFEST.filter((a) => a.adminOnly).map((a) => a.id).sort();
+    expect(adminOnly).toEqual(["finance-os", "money", "pricelist"]);
+  });
+
+  it("has unique ids", () => {
+    const ids = FALLBACK_MANIFEST.map((a) => a.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
 describe("fetchManifest", () => {
   const manifestUrl = "https://projects-dashboard-cyan.vercel.app/switcher-manifest.json";
   const sample = [
