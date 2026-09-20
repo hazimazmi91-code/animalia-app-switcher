@@ -2,11 +2,12 @@ import type { ManifestApp } from "./types";
 
 const CACHE_KEY = "animalia-switcher-manifest";
 
-// Same 8 apps as the hosted manifest (spec §6) — used on first paint and
+// Same 9 apps as the hosted manifest (spec §6) — used on first paint and
 // whenever the network/manifest host is unreachable and there's no cache yet.
 export const FALLBACK_MANIFEST: ManifestApp[] = [
   { id: "task-log", name: "Task Log", url: "https://animalia-task-log.vercel.app", icon: "clipboard", tint: "teal", group: "Daily" },
   { id: "xray-share-web", name: "X-ray Share", url: "https://xray-share-web.vercel.app", icon: "scan", tint: "pink", group: "Clinical" },
+  { id: "animalia-tools", name: "Animalia Tools", url: "https://animalia-tools.vercel.app", icon: "capsule", tint: "teal", group: "Clinical" },
   { id: "fluid-rate", name: "Fluid Rate Calc", url: "https://fluid-rate-calculator.vercel.app", icon: "droplet", tint: "lavender", group: "Clinical" },
   { id: "dosage-calc", name: "Dosage Calc", url: "https://dosage-calculator-mu.vercel.app", icon: "capsule", tint: "peach", group: "Clinical" },
   { id: "kreloses", name: "Kreloses Dashboard", url: "https://kreloses-dashboard.vercel.app", icon: "chart-bar", tint: "pink", group: "Admin" },
