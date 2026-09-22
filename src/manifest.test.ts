@@ -2,12 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fetchManifest, FALLBACK_MANIFEST } from "./manifest";
 
 describe("FALLBACK_MANIFEST", () => {
-  it("includes Animalia Tools (visible to everyone) and keeps the legacy Dosage and Fluid Rate apps", () => {
+  it("includes Animalia Tools (visible to everyone) and drops the retired Dosage and Fluid Rate tiles it replaces", () => {
     const tools = FALLBACK_MANIFEST.find((a) => a.id === "animalia-tools");
     expect(tools).toMatchObject({ name: "Animalia Tools", url: "https://animalia-tools.vercel.app", group: "Clinical" });
     expect(tools?.adminOnly).toBeUndefined();
-    expect(FALLBACK_MANIFEST.some((a) => a.id === "dosage-calc")).toBe(true);
-    expect(FALLBACK_MANIFEST.some((a) => a.id === "fluid-rate")).toBe(true);
+    // Both old apps now permanently redirect to Animalia Tools; keeping their tiles would send
+    // staff to a page that immediately bounces them.
+    expect(FALLBACK_MANIFEST.some((a) => a.id === "dosage-calc")).toBe(false);
+    expect(FALLBACK_MANIFEST.some((a) => a.id === "fluid-rate")).toBe(false);
   });
 
   it("keeps exactly the same admin-only apps as before", () => {
